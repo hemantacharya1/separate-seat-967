@@ -1,0 +1,27 @@
+
+Engineer Table---->
+
+create table engineer(
+engId int primary key auto_increment,
+name varchar(15) not null,
+department varchar(10) not null,
+email varchar(15) not null unique,
+password varchar(10) not null
+);
+
+
+Problem Table---->
+
+create table problem(
+problemId int primary key auto_increment,
+type varchar(10) not null,
+description varchar(150) not null,
+status varchar(10) default 'pending',
+date date not null
+);
+
+to change the default value of problemid to 1001-->
+alter table problem auto_increment=1001;
+
+
+Creating
