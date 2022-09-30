@@ -11,7 +11,9 @@ import com.mysql.cj.protocol.Resultset;
 import com.mysql.cj.xdevapi.Result;
 
 import beanClass.Engineer;
+import beanClass.Problem;
 import exception.engineerException;
+import exception.problemException;
 import system.engineers.utility.DButil;
 
 public class HOD_Dao_implements implements HOD_Dao{
@@ -129,6 +131,63 @@ public class HOD_Dao_implements implements HOD_Dao{
 		
 		
 		return result;
+	}
+
+	@Override
+	public List<Problem> getAllProblems() throws problemException {
+		List<Problem> problems =new ArrayList<>();
+		
+		try(Connection con=DButil.provideConnection()) {
+			
+			PreparedStatement ps=con.prepareStatement("select * from problem");
+			
+			ResultSet rs=ps.executeQuery();
+			
+			while(rs.next()) {
+				int id=rs.getInt("problemId");
+				String t=rs.getString("type");
+				String d=rs.getString("description");
+				String s=rs.getString("status");
+				String date=rs.getString("date");
+				
+				Problem p=new Problem(id, t, d, s, date);
+				
+				problems.add(p);
+			}
+			
+		} catch (SQLException e) {
+			throw new problemException(e.getMessage());
+		}
+		
+		if(problems.size()==0) {
+			throw new problemException("No Problem Found...!");
+		}
+		return problems;
+	}
+
+	@Override
+	public String assignProblem(int engineerID,int problemId) throws engineerException {
+		
+		String result="Not Assigned";
+		
+		try(Connection con=DButil.provideConnection()) {
+			
+			PreparedStatement ps=con.prepareStatement("insert into engineer_problem values(?,?)");
+			ps.setInt(1, engineerID);
+			ps.setInt(2, problemId);
+			
+			int x=ps.executeUpdate();
+			
+			if(x>0)
+				result="Problem "+problemId+" is Assigned to Engineer, engId->"+engineerID;
+			
+		} catch (SQLException e) {
+			throw new engineerException(e.getMessage());
+		}
+		
+		return result;
+		
+		
 	}
 
 	
