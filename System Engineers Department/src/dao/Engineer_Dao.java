@@ -12,8 +12,10 @@ public interface Engineer_Dao {
 	
 	public List<Problem> viewAssignedProblem(int id) throws engineerException;
 	
-	public String updateProblem(String update,int id) throws engineerException;
+	public String updateProblem(String update,int engId, int problemId) throws engineerException;
 	
+	public List<Problem> viewAttendProblem(int id) throws engineerException;
 	
+	public String updatePassword(int id,int password) throws engineerException;
 	
 }

@@ -1,6 +1,7 @@
 package dao;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -86,6 +87,98 @@ public class Engineer_dao_impl implements Engineer_Dao {
 			throw new engineerException("No Task is Assigned to You..");
 		}
 		return problems;
+	}
+
+	@Override
+	public String updateProblem(String update, int engId, int problemId) throws engineerException {
+		
+		String result="Not Resolved";
+		
+		try(Connection con=DButil.provideConnection()) {
+			
+			PreparedStatement ps=con.prepareStatement("update problem inner join engineer_problem set problem.status=?"
+					+ " where engId=? and problem.problemId=?");
+			
+			ps.setString(1, update);
+			ps.setInt(2, engId);
+			ps.setInt(3, problemId);
+			
+			int x=ps.executeUpdate();
+			
+			if(x>0)
+				result="Problem Updated..!";
+			
+		} catch (SQLException e) {
+			
+			throw new engineerException(e.getMessage());
+		}
+		
+		return result;
+	}
+
+	@Override
+	public List<Problem> viewAttendProblem(int id) throws engineerException {
+		List<Problem> problems=new ArrayList<>();
+		
+		try(Connection con=DButil.provideConnection()) {
+			
+		PreparedStatement ps=con.prepareStatement("select p.problemId,p.type,p.description,p.status,p.date from problem p inner join"
+					+ " engineer_problem ep where engId=? and p.problemid=ep.problemId;");
+			
+			ps.setInt(1, id);
+			
+			ResultSet rs=ps.executeQuery();
+			
+			while(rs.next()) {
+				int probId=rs.getInt("problemId");
+				String type=rs.getString("type");
+				String desc= rs.getString("description");
+				String status=rs.getString("status");
+				
+				Problem p=new Problem();
+				p.setProblemId(probId);
+				p.setType(type);
+				p.setDescription(desc);
+				p.setStatus(status);
+				
+				problems.add(p);
+			}
+			
+			if(problems.size()==0) {
+				throw new engineerException("No Problem Found..!");
+			}
+		
+		} catch (SQLException e) {
+
+			throw new engineerException(e.getMessage());
+		}
+		
+		return problems;
+		
+	}
+
+	@Override
+	public String updatePassword(int id,int password) throws engineerException {
+
+		String result="Not Updated..";
+		
+		try(Connection con=DButil.provideConnection()) {
+			
+			PreparedStatement ps=con.prepareStatement("update engineer set password=? where engid=?");
+			ps.setInt(1, password);
+			ps.setInt(2, id);
+			
+			int x=ps.executeUpdate();
+			
+			if(x>0)
+				result="Password Updated Successfully..!!";
+			
+		} catch (SQLException e) {
+			
+			throw new engineerException(e.getMessage());
+		}
+		
+		return result;
 	}
 
 }
