@@ -57,8 +57,8 @@ public class Engineer_dao_impl implements Engineer_Dao {
 		
 		try(Connection con=DButil.provideConnection()) {
 			
-			PreparedStatement ps=con.prepareStatement(" select ep.problemId, p.type, p.description, p.status from "
-					+ "engineer_problem ep Inner join problem p where ep.engId=?");
+			PreparedStatement ps=con.prepareStatement("select p.problemId, p.type, p.description, p.status from "
+					+ "problem p Inner join engineer_problem ep where ep.engId=? and ep.problemid=p.problemid");
 			ps.setInt(1, id);
 		
 			
@@ -158,15 +158,14 @@ public class Engineer_dao_impl implements Engineer_Dao {
 	}
 
 	@Override
-	public String updatePassword(int id,int password) throws engineerException {
-
+	public String updatePassword(String username, String password) throws engineerException {
 		String result="Not Updated..";
 		
 		try(Connection con=DButil.provideConnection()) {
 			
-			PreparedStatement ps=con.prepareStatement("update engineer set password=? where engid=?");
-			ps.setInt(1, password);
-			ps.setInt(2, id);
+			PreparedStatement ps=con.prepareStatement("update engineer set password=? where email=?");
+			ps.setString(1, password);
+			ps.setString(2, username);
 			
 			int x=ps.executeUpdate();
 			
@@ -175,7 +174,7 @@ public class Engineer_dao_impl implements Engineer_Dao {
 			
 		} catch (SQLException e) {
 			
-			throw new engineerException(e.getMessage());
+			throw new engineerException(e.getMessage()); 
 		}
 		
 		return result;
