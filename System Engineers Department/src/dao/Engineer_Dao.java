@@ -16,6 +16,6 @@ public interface Engineer_Dao {
 	
 	public List<Problem> viewAttendProblem(int id) throws engineerException;
 	
-	public String updatePassword(int id,int password) throws engineerException;
+	public String updatePassword(String username,String password) throws engineerException;
 	
 }
